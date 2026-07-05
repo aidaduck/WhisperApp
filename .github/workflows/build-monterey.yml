@@ -14,17 +14,23 @@ jobs:
       - name: Swift version
         run: swift --version
 
-      - name: Build release
-        run: swift build -c release
+      - name: Build release (universal — x86_64 + arm64)
+        run: |
+          swift build -c release --arch x86_64
+          swift build -c release --arch arm64
 
-      - name: Assemble .app bundle
+      - name: Assemble universal .app bundle
         run: |
           APP_NAME="WhisperApp"
           APP_BUNDLE="$APP_NAME.app"
           rm -rf "$APP_BUNDLE"
           mkdir -p "$APP_BUNDLE/Contents/MacOS"
           mkdir -p "$APP_BUNDLE/Contents/Resources"
-          cp ".build/release/$APP_NAME" "$APP_BUNDLE/Contents/MacOS/$APP_NAME"
+          lipo -create \
+            ".build/x86_64-apple-macosx/release/$APP_NAME" \
+            ".build/arm64-apple-macosx/release/$APP_NAME" \
+            -output "$APP_BUNDLE/Contents/MacOS/$APP_NAME"
+          lipo -info "$APP_BUNDLE/Contents/MacOS/$APP_NAME"
           cp "Info.plist" "$APP_BUNDLE/Contents/Info.plist"
           if [ -f "assets/Icon.icns" ]; then
             cp "assets/Icon.icns" "$APP_BUNDLE/Contents/Resources/Icon.icns"
