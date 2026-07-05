@@ -1,0 +1,41 @@
+name: Build for macOS 12 (Monterey)
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [monterey-build]
+
+jobs:
+  build:
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Swift version
+        run: swift --version
+
+      - name: Build release
+        run: swift build -c release
+
+      - name: Assemble .app bundle
+        run: |
+          APP_NAME="WhisperApp"
+          APP_BUNDLE="$APP_NAME.app"
+          rm -rf "$APP_BUNDLE"
+          mkdir -p "$APP_BUNDLE/Contents/MacOS"
+          mkdir -p "$APP_BUNDLE/Contents/Resources"
+          cp ".build/release/$APP_NAME" "$APP_BUNDLE/Contents/MacOS/$APP_NAME"
+          cp "Info.plist" "$APP_BUNDLE/Contents/Info.plist"
+          if [ -f "assets/Icon.icns" ]; then
+            cp "assets/Icon.icns" "$APP_BUNDLE/Contents/Resources/Icon.icns"
+          fi
+          codesign --force --deep --sign - "$APP_BUNDLE"
+
+      - name: Zip app bundle
+        run: ditto -c -k --sequesterRsrc --keepParent WhisperApp.app WhisperApp-monterey.zip
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: WhisperApp-monterey
+          path: WhisperApp-monterey.zip
