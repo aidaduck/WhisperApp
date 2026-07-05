@@ -22,7 +22,7 @@ struct AboutView: View {
             }
 
             Text("Whisper")
-                .font(.title2).bold()
+                .font(.title2).fontWeight(.bold)
             Text("Version \(version)")
                 .font(.caption)
                 .foregroundColor(.secondary)
