@@ -16,12 +16,12 @@ struct SettingsView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 16) {
                 Text("Whisper Settings")
-                    .font(.title3).fontWeight(.bold)
+                    .font(.title3.weight(.bold))
 
                 // ── Hotkey ──
                 VStack(alignment: .leading, spacing: 8) {
                     Label("Global Hotkey", systemImage: "keyboard")
-                        .font(.subheadline).fontWeight(.bold)
+                        .font(.subheadline.weight(.bold))
 
                     HStack(spacing: 12) {
                         Text("Shortcut:").font(.caption)
@@ -54,7 +54,7 @@ struct SettingsView: View {
                 // ── Groq (STT + AI correction) ──
                 VStack(alignment: .leading, spacing: 8) {
                     Label("Groq API Key", systemImage: "key.fill")
-                        .font(.subheadline).fontWeight(.bold)
+                        .font(.subheadline.weight(.bold))
 
                     Text("Used for both transcription (\(sttProvider.defaultModel)) and AI correction (\(llmProvider.defaultModel))")
                         .font(.caption).foregroundColor(.secondary)
